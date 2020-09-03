@@ -92,7 +92,8 @@ export ETH_RPC_URL=http://$RPC_ADDRESS:$RPC_PORT
 
 port=$((RPC_PORT + 30000))
 
-echo >&2 "dapp-testnet:   RPC URL: $ETH_RPC_URL"
+geth version
+echo >&2 "dapp-testnet:  RPC URL: $ETH_RPC_URL"
 echo >&2 "dapp-testnet:  TCP port: $port"
 echo >&2 "dapp-testnet:  Chain ID: $CHAINID"
 echo >&2 "dapp-testnet:  Database: $chaindir"
@@ -107,8 +108,9 @@ geth \
   2> >(tee "$chaindir/geth.log" | grep --line-buffered Success | sed 's/^/geth: /' >&2) \
   --datadir "$chaindir" --networkid "$CHAINID" --port="$port" \
   --mine --minerthreads=1 --allow-insecure-unlock \
-  --rpc --rpcapi "web3,eth,net,debug,personal" --rpccorsdomain '*' --nodiscover \
-  --rpcaddr="$RPC_ADDRESS" --rpcport="$RPC_PORT" --unlock="$(IFS=,; echo "${address[*]}")" --password=<(exit) &
+  --rpc --rpcapi "web3,eth,net,debug,personal,statediff" --rpccorsdomain '*' --nodiscover \
+  --rpcaddr="$RPC_ADDRESS" --rpcport="$RPC_PORT" --syncmode=full --statediff --ws --wsaddr="0.0.0.0" \
+  --unlock="$(IFS=,; echo "${address[*]}")" --password=<(exit) &
 
 gethpid=$!
 
@@ -132,7 +134,7 @@ ETH_FROM=$(seth --rpc-url="$ETH_RPC_URL" rpc eth_coinbase)
 export ETH_FROM
 export ETH_KEYSTORE=$chaindir/keystore
 export ETH_PASSWORD=/dev/null
-printf 'dapp-testnet:   Account: %s (default)\n' "${address[0]}" >&2
+printf 'dapp-testnet:  Account: %s (default)\n' "${address[0]}" >&2
 [[ "${#address[@]}" -gt 1 ]] && printf 'dapp-testnet:   Account: %s\n' "${address[@]:1}" >&2
 
 if [[ $1 ]]; then

@@ -90,23 +90,7 @@ in rec {
 
   # We use this to run private testnets without
   # the pesky transaction size limit.
-  go-ethereum-unlimited = super.go-ethereum.overrideAttrs (geth: rec {
-    name = "${geth.pname}-unlimited-${geth.version}";
-    preConfigure = ''
-      # Huge transaction calldata
-      substituteInPlace core/tx_pool.go --replace 'return ErrOversizedData' ""
-
-      # Huge contracts
-      substituteInPlace params/protocol_params.go --replace \
-        'MaxCodeSize = 24576' \
-        'MaxCodeSize = 1000000'
-
-      # Huge block gas limit in --dev mode
-      substituteInPlace core/genesis.go --replace \
-        'GasLimit:   6283185,' \
-        'GasLimit:   0xffffffffffffffff,'
-    '';
-  });
+  go-ethereum-unlimited = self.callPackage (import ./src/go-ethereum-statediff) {};
 
   qrtx = self.bashScript {
     name = "qrtx";
