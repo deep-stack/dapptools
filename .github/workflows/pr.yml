@@ -1,0 +1,12 @@
+name: "Build"
+on:
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: run dapp tests
+        run: nix-env -iA nixpkgs.bashInteractive && nix-shell --pure src/dapp-tests/shell.nix --command 'make --directory src/dapp-tests'
+      - name: Run docker build
+        run: make docker-build
