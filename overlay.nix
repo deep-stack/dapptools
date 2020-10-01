@@ -90,7 +90,7 @@ in rec {
 
   # We use this to run private testnets without
   # the pesky transaction size limit.
-  go-ethereum-unlimited = self.callPackage (import ./src/go-ethereum-statediff) {};
+  go-ethereum-unlimited = self.callPackage (import ./src/go-ethereum-priority) {};
 
   qrtx = self.bashScript {
     name = "qrtx";
