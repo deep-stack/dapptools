@@ -15,6 +15,6 @@ oops() {
 #[[ $RELEASE == null ]] && oops "No release found in ${API_OUTPUT}"
 
 cachix use dapp
-nix-env -iA dapp hevm seth solc -f .
+nix-env -iA dapp hevm seth solc go-ethereum-unlimited -f .
 
 echo -e "${GREEN}All set!${NC}"

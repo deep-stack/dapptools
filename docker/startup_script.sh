@@ -7,7 +7,7 @@ trap 'killall geth && rm -rf "$TMPDIR"' EXIT
 trap "exit 1" SIGINT SIGTERM
 
 TMPDIR=$(mktemp -d)
-dapp testnet --rpc-addr 0.0.0.0 --chain-id 4 --dir "$TMPDIR" &
+dapp testnet --rpc-addr 0.0.0.0 --chain-id 4 --db-user $DB_USER --db-password $DB_PASSWORD --db-name $DB_NAME --db-host $DB_HOST --db-port $DB_PORT --dir "$TMPDIR" &
 echo "sleeping 90 sec"
 # give it a few secs to start up
 sleep 90
@@ -19,7 +19,7 @@ echo $BAL
 
 # Deploy a contract:
 solc --bin --bin-runtime docker/stateful.sol -o "$TMPDIR"
-A_ADDR=$(seth send --create "$(<"$TMPDIR"/A.bin)" "constructor(uint y)" 1 --from "$ACC" --keystore "$TMPDIR"/8545/keystore --password /dev/null --gas 0xffffffff)
+A_ADDR=$(seth send --create "$(<"$TMPDIR"/A.bin)" "constructor(uint y)" 1 --from "$ACC" --keystore "$TMPDIR"/8545/keystore --password /dev/null --gas 0xfffffff)
 
 echo $A_ADDR
 

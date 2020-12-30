@@ -4,20 +4,30 @@ set -e
 OPTS="dapp testnet [<options>] <args>...
 dapp testnet --help
 --
-rpc-port=port      change RPC port (default: 8545)
-rpc-addr=address   change RPC address (default: 127.0.0.1)
-chain-id=number    change chain ID (default: 99)
-period=seconds     use a block time instead of instamine
-accounts=number    create multiple accounts (default: 1)
-save=name          after finishing, save snapshot
-load=name          start from a previously saved snapshot
-dir=directory      testnet directory
+db-user=name          database user
+db-password=password  database password
+db-name=name          database name
+db-host=address       database host
+db-port=port          database port
+rpc-port=port         change RPC port (default: 8545)
+rpc-addr=address      change RPC address (default: 127.0.0.1)
+chain-id=number       change chain ID (default: 99)
+period=seconds        use a block time instead of instamine
+accounts=number       create multiple accounts (default: 1)
+save=name             after finishing, save snapshot
+load=name             start from a previously saved snapshot
+dir=directory         testnet directory
 "
 
 eval "$(
   git rev-parse --parseopt -- "$@" <<<"$OPTS" || echo exit $?
 )"
 
+DB_USER=vdbm
+DB_PASSWORD=password
+DB_NAME=vulcanize_public
+DB_HOST=127.0.0.1
+DB_PORT=5432
 RPC_PORT=8545
 RPC_ADDRESS=127.0.0.1
 PERIOD=0
@@ -27,15 +37,20 @@ gethdir=$HOME/.dapp/testnet
 
 while [[ $1 ]]; do
   case $1 in
-    --)          shift; break;;
-    --rpc-port)  shift; RPC_PORT=$1;;
-    --rpc-addr)  shift; RPC_ADDRESS=$1;;
-    --chain-id)  shift; CHAINID=$1;;
-    --period)    shift; PERIOD=$1;;
-    --accounts)  shift; ACCOUNTS=$(($1 - 1));;
-    --save)      shift; SAVE=$1;;
-    --load)      shift; LOAD=$1;;
-    --dir)       shift; gethdir=$1;;
+    --)              shift; break;;
+    --db-user)       shift; DB_USER=$1;;
+    --db-password)   shift; DB_PASSWORD=$1;;
+    --db-name)       shift; DB_NAME=$1;;
+    --db-host)       shift; DB_HOST=$1;;
+    --db-port)       shift; DB_PORT=$1;;
+    --rpc-port)      shift; RPC_PORT=$1;;
+    --rpc-addr)      shift; RPC_ADDRESS=$1;;
+    --chain-id)      shift; CHAINID=$1;;
+    --period)        shift; PERIOD=$1;;
+    --accounts)      shift; ACCOUNTS=$(($1 - 1));;
+    --save)          shift; SAVE=$1;;
+    --load)          shift; LOAD=$1;;
+    --dir)           shift; gethdir=$1;;
     *) printf "${0##*/}: internal error: %q\\n" "$1"; exit 1
   esac; shift
 done
@@ -108,8 +123,10 @@ geth \
   --datadir "$chaindir" --networkid "$CHAINID" --port="$port" \
   --mine --minerthreads=1 --allow-insecure-unlock \
   --rpc --rpcapi "web3,eth,net,debug,personal,statediff" --rpccorsdomain '*' --nodiscover \
-  --rpcaddr="$RPC_ADDRESS" --rpcport="$RPC_PORT" --syncmode=full --statediff --ws --wsaddr="0.0.0.0" \
-  --unlock="$(IFS=,; echo "${address[*]}")" --password=<(exit) &
+  --rpcaddr="$RPC_ADDRESS" --rpcport="$RPC_PORT" --syncmode=full \
+  --statediff --statediff.db="host=$DB_HOST port=$DB_PORT user=$DB_USER password=$DB_PASSWORD dbname=$DB_NAME sslmode=disable" \
+  --statediff.dbnodeid 1 --statediff.dbclientname test1 --statediff.writing=true \
+  --ws --wsaddr="0.0.0.0" --unlock="$(IFS=,; echo "${address[*]}")" --password=<(exit) &
 
 gethpid=$!
 
