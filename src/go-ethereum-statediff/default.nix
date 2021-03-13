@@ -2,10 +2,10 @@
 
 stdenv.mkDerivation rec {
   name = "go-ethereum-statediff";
-  version = "v1.9.24-statediff-0.0.13";
+  version = "v1.10.1-statediff-0.0.15";
   src = fetchurl {
     url = "https://github.com/vulcanize/go-ethereum/releases/download/${version}/geth-linux-amd64";
-    sha256 = "1g5wngx1lz8rfwc5q6h04rg1jb88rxgllpxacvbhxpmswzqvcyjg";
+    sha256 = "1k7d2hzn27k6i8qwndwd3w71ab2avz0k2f221lmx1zcsd4m6cdwc";
   };
 
   phases = ["installPhase" "patchPhase"];
