@@ -94,7 +94,7 @@ else
       -n {} -n "$PERIOD" -i period -n 3000 -i epoch -i clique \
       -i config \
     -s 0x1 -i difficulty \
-    -s 16777216 -i gaslimit \
+    -s 0xffffffffffff -i gaslimit \
     -s "0x3132333400000000000000000000000000000000000000000000000000000000""${address[0]#0x}""0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -i extraData \
     -n {} \
       "${balance[@]}" \
@@ -121,12 +121,12 @@ set +m
 geth \
   2> >(tee "$chaindir/geth.log" | grep --line-buffered Success | sed 's/^/geth: /' >&2) \
   --datadir "$chaindir" --networkid "$CHAINID" --port="$port" \
-  --mine --minerthreads=1 --allow-insecure-unlock \
+  --mine --miner.threads=1 --allow-insecure-unlock \
   --rpc --rpcapi "web3,eth,net,debug,personal,statediff" --rpccorsdomain '*' --rpcvhosts '*' --nodiscover \
   --rpcaddr="$RPC_ADDRESS" --rpcport="$RPC_PORT" --syncmode=full --gcmode=archive \
   --statediff --statediff.db="host=$DB_HOST port=$DB_PORT user=$DB_USER password=$DB_PASSWORD dbname=$DB_NAME sslmode=disable" \
   --statediff.dbnodeid 1 --statediff.dbclientname test1 --statediff.writing=true \
-  --ws --wsaddr="0.0.0.0" --unlock="$(IFS=,; echo "${address[*]}")" --password=<(exit) &
+  --ws --ws.addr="0.0.0.0" --unlock="$(IFS=,; echo "${address[*]}")" --password=<(exit) &
 
 gethpid=$!
 
