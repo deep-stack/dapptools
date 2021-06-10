@@ -30,6 +30,26 @@ Then install dapptools:
 curl https://dapp.tools/install | sh
 ```
 
+### Upgrading geth-statediff
+
+1. Set version at `src/go-ethereum-statediff/default.nix` line 5
+2. Get sha256 hash using
+    ```
+   nix-prefetch-url https://github.com/vulcanize/go-ethereum/releases/download/${version}/geth-linux-amd64
+   ```
+   Replace `${version}` with correct geth-statediff version. For example:
+   ```
+   > nix-prefetch-url https://github.com/vulcanize/go-ethereum/releases/download/v1.10.3-statediff-0.0.22/geth-linux-amd64
+   [39.4 MiB DL]
+   path is '/nix/store/9da7jqjw52lhl9cr6an8m4c478rg6yn6-geth-linux-amd64'
+   1jnc96ly0qi40j8dlgip520n83gfrbv30bqdk9h5fslxzcwhf0yj
+   ```
+   
+   `1jnc96ly0qi40j8dlgip520n83gfrbv30bqdk9h5fslxzcwhf0yj` is sha256 hash. Set it at `src/go-ethereum-statediff/default.nix` line 8
+3. Bump versions at
+    * `src/dapp/libexec/dapp/dapp---version`
+    * `src/dapp/default.nix` line 7
+
 ### Installing custom solc versions
 
 You can specify a custom `solc` version to run within `dapp` with `dapp --use
