@@ -7,7 +7,8 @@ trap 'killall geth && rm -rf "$TMPDIR"' EXIT
 trap "exit 1" SIGINT SIGTERM
 
 TMPDIR=$(mktemp -d)
-dapp testnet --rpc-addr 0.0.0.0 --chain-id 4 --db-user $DB_USER --db-password $DB_PASSWORD --db-name $DB_NAME --db-host $DB_HOST --db-port $DB_PORT --dir "$TMPDIR" &
+dapp testnet --rpc-addr 0.0.0.0 --chain-id 4 --db-user $DB_USER --db-password $DB_PASSWORD --db-name $DB_NAME \
+  --db-host $DB_HOST --db-port $DB_PORT --dir "$TMPDIR" --address=$ADDRESS &
 echo "sleeping 90 sec"
 # give it a few secs to start up
 sleep 90
