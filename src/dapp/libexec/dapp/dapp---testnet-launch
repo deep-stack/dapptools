@@ -129,8 +129,8 @@ geth \
   2> >(tee "$chaindir/geth.log" | grep --line-buffered Success | sed 's/^/geth: /' >&2) \
   --datadir "$chaindir" --networkid "$CHAINID" --port="$port" \
   --mine --miner.threads=1 --allow-insecure-unlock \
-  --rpc --rpcapi "web3,eth,net,debug,personal,statediff" --rpccorsdomain '*' --rpcvhosts '*' --nodiscover \
-  --rpcaddr="$RPC_ADDRESS" --rpcport="$RPC_PORT" --syncmode=full --gcmode=archive \
+  --http --http.api "web3,eth,net,debug,personal,statediff" --http.corsdomain '*' --http.vhosts '*' --nodiscover \
+  --http.addr="$RPC_ADDRESS" --http.port="$RPC_PORT" --syncmode=full --gcmode=archive \
   --statediff --statediff.db="host=$DB_HOST port=$DB_PORT user=$DB_USER password=$DB_PASSWORD dbname=$DB_NAME sslmode=disable" \
   --statediff.dbnodeid 1 --statediff.dbclientname test1 --statediff.writing=true \
   --ws --ws.addr="0.0.0.0" --unlock="$(IFS=,; echo "${address[*]}")" --password=<(exit) &
