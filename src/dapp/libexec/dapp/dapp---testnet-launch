@@ -9,6 +9,7 @@ db-password=password  database password
 db-name=name          database name
 db-host=address       database host
 db-port=port          database port
+db-write=bool         turn on database write mode
 rpc-port=port         change RPC port (default: 8545)
 rpc-addr=address      change RPC address (default: 127.0.0.1)
 chain-id=number       change chain ID (default: 99)
@@ -45,6 +46,7 @@ while [[ $1 ]]; do
     --db-name)       shift; DB_NAME=$1;;
     --db-host)       shift; DB_HOST=$1;;
     --db-port)       shift; DB_PORT=$1;;
+    --db-write)      shift; DB_WRITE=$1;;
     --rpc-port)      shift; RPC_PORT=$1;;
     --rpc-addr)      shift; RPC_ADDRESS=$1;;
     --chain-id)      shift; CHAINID=$1;;
@@ -132,7 +134,7 @@ geth \
   --http --http.api "web3,eth,net,debug,personal,statediff" --http.corsdomain '*' --http.vhosts '*' --nodiscover \
   --http.addr="$RPC_ADDRESS" --http.port="$RPC_PORT" --syncmode=full --gcmode=archive \
   --statediff --statediff.db="host=$DB_HOST port=$DB_PORT user=$DB_USER password=$DB_PASSWORD dbname=$DB_NAME sslmode=disable" \
-  --statediff.dbnodeid 1 --statediff.dbclientname test1 --statediff.writing=true \
+  --statediff.dbnodeid 1 --statediff.dbclientname test1 --statediff.writing="$DB_WRITE" \
   --ws --ws.addr="0.0.0.0" --unlock="$(IFS=,; echo "${address[*]}")" --password=<(exit) &
 
 gethpid=$!
