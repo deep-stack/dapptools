@@ -1,3 +1,4 @@
+set -e
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
@@ -14,6 +15,7 @@ oops() {
 #
 #[[ $RELEASE == null ]] && oops "No release found in ${API_OUTPUT}"
 
+echo -e "${GREEN}STARTING!!${NC}"
 cachix use dapp
 nix-env -iA dapp hevm seth solc go-ethereum-unlimited -f .
 
