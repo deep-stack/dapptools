@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-echo dapp 0.30.0-v1.10.14-statediff-0.0.29
+echo dapp 0.30.0-v1.10.16-statediff-3.0.2
 # use a custom path is DAPP_SOLC is set
 SOLC=${DAPP_SOLC:-solc}
 $SOLC --version
