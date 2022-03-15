@@ -10,6 +10,8 @@ db-name=name          database name
 db-host=address       database host
 db-port=port          database port
 db-write=bool         turn on database write mode
+db-type=name          the type of database
+db-driver=name        the driver used for the database
 rpc-port=port         change RPC port (default: 8545)
 rpc-addr=address      change RPC address (default: 127.0.0.1)
 chain-id=number       change chain ID (default: 99)
@@ -30,6 +32,8 @@ DB_PASSWORD=password
 DB_NAME=vulcanize_public
 DB_HOST=127.0.0.1
 DB_PORT=5432
+DB_TYPE=postgres
+DB_DRIVER=sqlx
 RPC_PORT=8545
 RPC_ADDRESS=127.0.0.1
 PERIOD=0
@@ -47,6 +51,8 @@ while [[ $1 ]]; do
     --db-host)       shift; DB_HOST=$1;;
     --db-port)       shift; DB_PORT=$1;;
     --db-write)      shift; DB_WRITE=$1;;
+    --db-type)       shift; DB_TYPE=$1;;
+    --db-driver)     shift; DB_DRIVER=$1;;
     --rpc-port)      shift; RPC_PORT=$1;;
     --rpc-addr)      shift; RPC_ADDRESS=$1;;
     --chain-id)      shift; CHAINID=$1;;
@@ -133,8 +139,10 @@ geth \
   --mine --miner.threads=1 --allow-insecure-unlock \
   --http --http.api "web3,eth,net,debug,personal,statediff" --http.corsdomain '*' --http.vhosts '*' --nodiscover \
   --http.addr="$RPC_ADDRESS" --http.port="$RPC_PORT" --syncmode=full --gcmode=archive \
-  --statediff --statediff.db="host=$DB_HOST port=$DB_PORT user=$DB_USER password=$DB_PASSWORD dbname=$DB_NAME sslmode=disable" \
-  --statediff.dbnodeid 1 --statediff.dbclientname test1 --statediff.writing="$DB_WRITE" \
+  --statediff --statediff.db.host="$DB_HOST" --statediff.db.port="$DB_PORT" --statediff.db.user="$DB_USER" \
+  --statediff.db.password="$DB_PASSWORD" --statediff.db.name="$DB_NAME" \
+  --statediff.db.nodeid 1 --statediff.db.clientname test1 --statediff.writing="$DB_WRITE" \
+  --statediff.db.type="$DB_TYPE" --statediff.db.driver="$DB_DRIVER" \
   --ws --ws.addr="0.0.0.0" --unlock="$(IFS=,; echo "${address[*]}")" --password=<(exit) &
 
 gethpid=$!
